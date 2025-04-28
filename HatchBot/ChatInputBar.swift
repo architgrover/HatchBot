@@ -18,6 +18,7 @@ struct ChatInputBar: View {
     @State private var dragOffset: CGFloat = 0
     @State private var fontSize: CGFloat = 16
     @State private var isKeyboardVisible = false
+    @State private var debounceFontSize: CGFloat = 18
     @FocusState private var isTextEditorFocused: Bool
 
     private let minHeight: CGFloat = 40
@@ -187,20 +188,27 @@ struct ChatInputBar: View {
     private func updateTextHeight() {
         let screenWidth = UIScreen.main.bounds.width
         let textAreaWidth = screenWidth - (containerPadding * 2 + 12 * 2)
-        let attributedText = NSAttributedString(
-            string: text.isEmpty ? " " : text,
-            attributes: [.font: UIFont.systemFont(ofSize: fontSize)]
-        )
-        let textRect = attributedText.boundingRect(
-            with: CGSize(width: textAreaWidth, height: .greatestFiniteMagnitude),
-            options: [.usesLineFragmentOrigin],
-            context: nil
-        )
+        let attributedText = NSAttributedString(string: text.isEmpty ? " " : text, attributes: [.font: UIFont.systemFont(ofSize: fontSize)])
+        let textRect = attributedText.boundingRect(with: CGSize(width: textAreaWidth, height: .greatestFiniteMagnitude), options: [.usesLineFragmentOrigin], context: nil)
 
         let lineCount = Int(ceil(textRect.height / lineHeight))
         let wrappedLineCount = min(lineCount, maxTextLines)
-        textHeight = max(minHeight, CGFloat(wrappedLineCount) * lineHeight)
+
+        let newFontSize: CGFloat
+        if wrappedLineCount > (maxTextLines * 2 / 3) {
+            newFontSize = max(14, fontSize - 2)
+        } else if wrappedLineCount <= maxTextLines / 2 {
+            newFontSize = min(18, fontSize + 2)
+        } else {
+            newFontSize = fontSize
+        }
+
+        // Debouncing font size changes
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            debounceFontSize = newFontSize
+        }
     }
+
 
     private func handleKeyboard(notification: Notification) {
         guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else {

@@ -15,6 +15,7 @@ struct DynamicTextEditor: View {
         TextEditor(text: $text)
             .font(.system(size: fontSize))
             .frame(minHeight: 80)
+            .scrollContentBackground(.hidden)
             .background(Color.gray.opacity(0.05))
             .cornerRadius(12)
             .onChange(of: text) { _, _ in

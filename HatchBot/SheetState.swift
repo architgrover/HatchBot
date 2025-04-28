@@ -10,6 +10,10 @@ import Foundation
 enum SheetState {
     case compact
     case expanded
+    
+    mutating func toggle() {
+        self = self == .compact ? .expanded : .compact
+    }
 }
 
 struct DynamicFontSettings {

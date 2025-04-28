@@ -10,9 +10,22 @@
 		32CD3B122DBFDA5000AAE46D /* HatchBot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HatchBot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		3299344A2DC044E700ED9C72 /* Exceptions for "HatchBot" folder in "HatchBot" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 32CD3B112DBFDA5000AAE46D /* HatchBot */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		32CD3B142DBFDA5000AAE46D /* HatchBot */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				3299344A2DC044E700ED9C72 /* Exceptions for "HatchBot" folder in "HatchBot" target */,
+			);
 			path = HatchBot;
 			sourceTree = "<group>";
 		};
