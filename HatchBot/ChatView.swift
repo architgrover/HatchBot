@@ -15,10 +15,10 @@ struct ChatView: View {
     @State private var sheetState: SheetState = .compact
     @State private var fontSize: CGFloat = DynamicFontSettings.large
     @State private var selectedImages: [UIImage] = []
-    @State private var selectedPhotoItems: [PhotosPickerItem] = [] // NEW STATE
+    @State private var selectedPhotoItems: [PhotosPickerItem] = []
     @State private var showPicker = false
     @FocusState private var isFocused: Bool
-    
+
     var body: some View {
         ZStack(alignment: .bottom) {
             VStack {
@@ -53,7 +53,7 @@ struct ChatView: View {
                         }
                     }
             }
-            
+
             BottomSheet(
                 message: $message,
                 selectedImages: $selectedImages,
@@ -61,11 +61,16 @@ struct ChatView: View {
                 sheetState: $sheetState,
                 fontSize: $fontSize,
                 showPicker: $showPicker,
-                selectedPhotoItems: $selectedPhotoItems // Pass binding
+                selectedPhotoItems: $selectedPhotoItems
             )
             .focused($isFocused)
         }
         .navigationTitle("Chat with AI")
+        .onAppear {
+            PHPhotoLibrary.requestAuthorization { status in
+                print("Photo Library Access: \(status)")
+            }
+        }
     }
 
     func sendMessage() {

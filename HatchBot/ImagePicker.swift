@@ -11,77 +11,56 @@ import PhotosUI
 struct ImagePickerSheet: View {
     @Binding var sheetState: SheetState
     @Binding var selectedImages: [UIImage]
-    @State private var showFullGallery = false
     @State private var selectedPhotoItems: [PhotosPickerItem] = []
 
     var body: some View {
         VStack {
-            Capsule()
-                .frame(width: 40, height: 6)
-                .foregroundColor(.gray.opacity(0.5))
+            Text("Select Photos")
+                .font(.headline)
                 .padding(.top, 8)
 
-            if !showFullGallery {
-                // Semi-expanded image grid
-                ScrollView {
-                    LazyVGrid(columns: Array(repeating: GridItem(), count: 3), spacing: 5) {
-                        ForEach(selectedImages.indices, id: \.self) { index in
-                            Image(uiImage: selectedImages[index])
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 80, height: 80)
-                                .clipShape(RoundedRectangle(cornerRadius: 8))
-                                .onTapGesture {
-                                    sheetState = .compact
-                                }
-                        }
+            // Image grid displays selections
+            ScrollView {
+                LazyVGrid(columns: Array(repeating: GridItem(), count: 3), spacing: 5) {
+                    ForEach(selectedImages.indices, id: \.self) { index in
+                        Image(uiImage: selectedImages[index])
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 80, height: 80)
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
                     }
-                    .padding(10)
                 }
+                .padding(10)
             }
 
+            // Hidden PhotosPicker to handle selection
             PhotosPicker(selection: $selectedPhotoItems, matching: .images) {
-                Text("Select Photos")
+                Text("Tap to Choose")
                     .padding()
                     .background(Color.blue)
                     .foregroundColor(.white)
                     .clipShape(RoundedRectangle(cornerRadius: 8))
             }
             .onChange(of: selectedPhotoItems) { newItems in
-                loadImages(from: newItems)
-                sheetState = .expanded // Expand after selecting
+                Task {
+                    await loadImages(from: newItems)
+                }
             }
-
-            Button("Expand Gallery") {
-                showFullGallery.toggle()
-            }
-            .padding()
         }
         .background(Color(.systemBackground))
         .cornerRadius(15)
-        .frame(maxHeight: showFullGallery ? 500 : 250)
-        .gesture(
-            DragGesture()
-                .onChanged { value in
-                    if value.translation.height < -50 {
-                        showFullGallery = true
-                    } else if value.translation.height > 50 {
-                        showFullGallery = false
-                    }
-                }
-        )
-        .animation(.easeInOut, value: showFullGallery)
+        .frame(maxHeight: 300)
+        .animation(.easeInOut, value: sheetState)
     }
 
-    func loadImages(from items: [PhotosPickerItem]) {
+    func loadImages(from items: [PhotosPickerItem]) async {
         for item in items {
-            item.loadTransferable(type: Data.self) { result in
-                if let imageData = try? result.get(), let image = UIImage(data: imageData) {
-                    DispatchQueue.main.async {
-                        selectedImages.append(image)
-                    }
+            if let image = await item.loadUIImage() {
+                DispatchQueue.main.async {
+                    selectedImages.append(image)
                 }
             }
         }
     }
 }
+

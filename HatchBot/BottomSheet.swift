@@ -18,7 +18,9 @@ struct BottomSheet: View {
     @Binding var sheetState: SheetState
     @Binding var fontSize: CGFloat
     @Binding var showPicker: Bool
-    @Binding var selectedPhotoItems: [PhotosPickerItem] // NEW BINDING
+    @Binding var selectedPhotoItems: [PhotosPickerItem]
+
+    @GestureState private var dragOffset: CGFloat = 0
 
     var body: some View {
         VStack(spacing: 10) {
@@ -33,28 +35,31 @@ struct BottomSheet: View {
                 .padding(.bottom, 8)
 
             if !selectedImages.isEmpty {
-                HorizontalImageScroll(selectedImages: $selectedImages)
-            }
-
-            if showPicker {
-                PhotosPicker(selection: $selectedPhotoItems, matching: .images) {
-                    Text("Select Images")
-                        .padding()
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
+                ScrollView {
+                    LazyVGrid(columns: Array(repeating: GridItem(), count: 3), spacing: 5) {
+                        ForEach(selectedImages.indices, id: \.self) { index in
+                            Image(uiImage: selectedImages[index])
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 80, height: 80)
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
+                        }
+                    }
+                    .padding(10)
                 }
                 .transition(.opacity)
-                .onChange(of: selectedPhotoItems) { newItems in
-                    Task {
-                        await loadImages(from: newItems)
-                    }
-                }
+            }
+
+            // INLINE IMAGE PICKER (Keyboard-sized)
+            if showPicker {
+                ImagePickerGrid(selectedImages: $selectedImages, selectedPhotoItems: $selectedPhotoItems)
+                    .frame(height: 300) // Mimic keyboard height
+                    .transition(.move(edge: .bottom))
             }
 
             HStack {
                 Button(action: {
-                    showPicker.toggle() // Toggle inline picker
+                    showPicker.toggle() // Show picker inline
                 }) {
                     Image(systemName: "photo.on.rectangle.fill")
                         .font(.title2)
@@ -74,19 +79,25 @@ struct BottomSheet: View {
                 .fill(Color(UIColor.systemBackground))
                 .shadow(radius: 10)
         )
+        .offset(y: dragOffset)
+        .gesture(
+            DragGesture()
+                .updating($dragOffset) { value, state, _ in
+                    state = value.translation.height
+                }
+                .onEnded { value in
+                    if value.translation.height < -100 {
+                        sheetState = .expanded
+                    } else if value.translation.height > 100 {
+                        sheetState = .compact
+                        showPicker = false
+                    }
+                }
+        )
         .animation(.easeInOut(duration: 0.3), value: sheetState)
     }
-    
-    func loadImages(from items: [PhotosPickerItem]) async {
-        for item in items {
-            if let image = await item.loadUIImage() {
-                DispatchQueue.main.async {
-                    selectedImages.append(image)
-                }
-            }
-        }
-    }
 }
+
 
 extension PhotosPickerItem {
     func loadUIImage() async -> UIImage? {
