@@ -14,19 +14,29 @@ struct HorizontalImageScrollView: View {
         ScrollView(.horizontal) {
             HStack {
                 ForEach(selectedImages, id: \.self) { image in
-                    Image(uiImage: image)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 50, height: 50)
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                        .onTapGesture {
-                            if let index = selectedImages.firstIndex(of: image) {
-                                selectedImages.remove(at: index)
-                            }
+                    ZStack(alignment: .topTrailing) {
+                        Image(uiImage: image)
+                            .resizable()
+                            .aspectRatio(1, contentMode: .fill)
+                            .frame(width: 50, height: 50)
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+
+                        Button(action: {
+                            removeImage(image)
+                        }) {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundColor(.red)
+                                .background(Color.white.opacity(0.8))
+                                .clipShape(Circle())
                         }
+                        .offset(x: 0, y: 0)
+                    }
                 }
             }
         }
     }
-}
 
+    func removeImage(_ image: UIImage) {
+        selectedImages.removeAll { $0 == image }
+    }
+}

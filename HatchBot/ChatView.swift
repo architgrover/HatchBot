@@ -11,7 +11,7 @@ import PhotosUI
 
 struct ChatView: View {
     @State private var message = ""
-    @State private var messages: [Message] = [] // List of messages
+    @State private var messages: [Message] = []
     @State private var sheetState: SheetState = .compact
     @State private var fontSize: CGFloat = DynamicFontSettings.large
     @State private var selectedImages: [UIImage] = []
@@ -71,14 +71,25 @@ struct ChatView: View {
         
         let userMessage = Message(id: UUID(), images: selectedImages, text: message, isUser: true)
         messages.append(userMessage)
+        mockAIResponse(text: message, images: selectedImages)
         message = ""
-        selectedImages.removeAll() // Clear selected images after sending
+        selectedImages.removeAll()
+    }
+    
+    func mockAIResponse(text: String, images: [UIImage]) {
+        let aiIsTyping = Message(id: UUID(), images: [], text: "AI is typing...", isUser: false)
+        messages.append(aiIsTyping)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            messages.removeLast()
+            let aiResponse = Message(id: UUID(), images: images, text: "AI: \(text)", isUser: false)
+            messages.append(aiResponse)
+        }
     }
 
     func deleteMessage(_ message: Message) {
         if let index = messages.firstIndex(where: { $0.id == message.id }) {
             withAnimation {
-                messages.remove(at: index) // Delete the message from the array
+                messages.remove(at: index)
             }
         }
     }

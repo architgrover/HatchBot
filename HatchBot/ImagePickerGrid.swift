@@ -12,6 +12,8 @@ struct ImagePickerGrid: View {
     @Binding var selectedImages: [UIImage]
     @Binding var selectedPhotoItems: [PhotosPickerItem]
     @State private var libraryImages: [UIImage] = []
+    
+    let tileSize: CGFloat = UIScreen.main.bounds.width / 3 - 5
 
     var body: some View {
         VStack {
@@ -25,8 +27,8 @@ struct ImagePickerGrid: View {
                     ForEach(libraryImages.indices, id: \.self) { index in
                         Image(uiImage: libraryImages[index])
                             .resizable()
-                            .scaledToFit()
-                            .frame(width: 80, height: 80)
+                            .aspectRatio(1, contentMode: .fill)
+                            .frame(width: tileSize, height: tileSize)
                             .clipShape(RoundedRectangle(cornerRadius: 8))
                             .onTapGesture {
                                 print("Tapped on image at index \(index)")
