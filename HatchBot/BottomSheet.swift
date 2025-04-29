@@ -6,6 +6,10 @@
 //
 
 import SwiftUI
+import PhotosUI
+
+import SwiftUI
+import PhotosUI
 
 struct BottomSheet: View {
     @Binding var message: String
@@ -13,44 +17,53 @@ struct BottomSheet: View {
     var onSend: () -> Void
     @Binding var sheetState: SheetState
     @Binding var fontSize: CGFloat
-    
-    @GestureState private var dragOffset = CGSize.zero
-    @State private var offsetY: CGFloat = 0
-    
+    @Binding var showPicker: Bool
+    @Binding var selectedPhotoItems: [PhotosPickerItem] // NEW BINDING
+
     var body: some View {
         VStack(spacing: 10) {
-            // Drag Handle
             Capsule()
                 .frame(width: 40, height: 6)
                 .foregroundColor(.gray.opacity(0.5))
                 .padding(.top, 8)
 
-            // Chips
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack {
-                    ForEach(["Hello", "Quick question", "Summarize", "Explain"], id: \.self) { chip in
-                        Text(chip)
-                            .padding(.horizontal)
-                            .padding(.vertical, 8)
-                            .background(Color.gray.opacity(0.2))
-                            .cornerRadius(16)
-                    }
-                }
-                .padding(.horizontal)
-            }
-
-            if !selectedImages.isEmpty {
-                HorizontalImageScroll(selectedImages: $selectedImages)
-            }
-
-            // Text Editor
             DynamicTextEditor(text: $message, fontSize: $fontSize)
                 .frame(minHeight: 80, maxHeight: sheetState == .expanded ? 300 : 120)
                 .padding(.horizontal)
                 .padding(.bottom, 8)
 
+            if !selectedImages.isEmpty {
+                HorizontalImageScroll(selectedImages: $selectedImages)
+            }
+
+            if showPicker {
+                PhotosPicker(selection: $selectedPhotoItems, matching: .images) {
+                    Text("Select Images")
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                }
+                .transition(.opacity)
+                .onChange(of: selectedPhotoItems) { newItems in
+                    Task {
+                        await loadImages(from: newItems)
+                    }
+                }
+            }
+
             HStack {
-                ImageSelectionButton(sheetState: $sheetState, selectedImages: $selectedImages)
+                Button(action: {
+                    showPicker.toggle() // Toggle inline picker
+                }) {
+                    Image(systemName: "photo.on.rectangle.fill")
+                        .font(.title2)
+                        .foregroundColor(.white)
+                        .padding()
+                        .background(Color.blue)
+                        .clipShape(Circle())
+                }
+
                 Spacer()
                 SendMessageButton(action: onSend)
             }
@@ -61,26 +74,57 @@ struct BottomSheet: View {
                 .fill(Color(UIColor.systemBackground))
                 .shadow(radius: 10)
         )
-        .offset(y: offsetY)
-        .gesture(
-            DragGesture()
-                .updating($dragOffset) { value, state, _ in
-                    state = value.translation
-                }
-                .onChanged { value in
-                    offsetY = max(0, value.translation.height)
-                }
-                .onEnded { value in
-                    withAnimation(.spring(response: 0.4, dampingFraction: 0.8, blendDuration: 0.4)) {
-                        sheetState = value.translation.height > 100 ? .compact : .expanded
-                    }
-                    offsetY = 0
-                }
-        )
         .animation(.easeInOut(duration: 0.3), value: sheetState)
-        .onTapGesture {
-            withAnimation(.spring(response: 0.4, dampingFraction: 0.8, blendDuration: 0.4)) {
-                sheetState = .expanded
+    }
+    
+    func loadImages(from items: [PhotosPickerItem]) async {
+        for item in items {
+            if let image = await item.loadUIImage() {
+                DispatchQueue.main.async {
+                    selectedImages.append(image)
+                }
+            }
+        }
+    }
+}
+
+extension PhotosPickerItem {
+    func loadUIImage() async -> UIImage? {
+        do {
+            if let imageData = try await self.loadTransferable(type: Data.self),
+               let image = UIImage(data: imageData) {
+                return image
+            }
+        } catch {
+            print("Failed to load image:", error)
+        }
+        return nil
+    }
+}
+
+
+struct HorizontalImageScroll: View {
+    @Binding var selectedImages: [UIImage]
+
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack {
+                ForEach(selectedImages, id: \.self) { image in
+                    ZStack {
+                        Image(uiImage: image)
+                            .resizable()
+                            .frame(width: 50, height: 50)
+                            .clipShape(RoundedRectangle(cornerRadius: 5))
+
+                        Button(action: {
+                            selectedImages.removeAll { $0 == image }
+                        }) {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundColor(.red)
+                                .offset(x: -8, y: -8)
+                        }
+                    }
+                }
             }
         }
     }
