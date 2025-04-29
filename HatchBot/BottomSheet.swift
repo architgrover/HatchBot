@@ -8,9 +8,6 @@
 import SwiftUI
 import PhotosUI
 
-import SwiftUI
-import PhotosUI
-
 struct BottomSheet: View {
     @Binding var message: String
     @Binding var selectedImages: [UIImage]
@@ -20,7 +17,12 @@ struct BottomSheet: View {
     @Binding var showPicker: Bool
     @Binding var selectedPhotoItems: [PhotosPickerItem]
 
-    @GestureState private var dragOffset: CGFloat = 0
+    @State private var dragOffset: CGFloat = 0
+    @State private var currentOffset: CGFloat = 0
+    @GestureState private var isDragging = false
+
+    let compactHeight: CGFloat = 150
+    let expandedHeight: CGFloat = 500
 
     var body: some View {
         VStack(spacing: 10) {
@@ -35,31 +37,42 @@ struct BottomSheet: View {
                 .padding(.bottom, 8)
 
             if !selectedImages.isEmpty {
-                ScrollView {
-                    LazyVGrid(columns: Array(repeating: GridItem(), count: 3), spacing: 5) {
+                ScrollView(.horizontal) {
+                    HStack {
                         ForEach(selectedImages.indices, id: \.self) { index in
-                            Image(uiImage: selectedImages[index])
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 80, height: 80)
-                                .clipShape(RoundedRectangle(cornerRadius: 8))
+                            ZStack(alignment: .topTrailing) {
+                                Image(uiImage: selectedImages[index])
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 80, height: 80)
+                                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                                    .padding(4)
+
+                                Button(action: {
+                                    selectedImages.remove(at: index)
+                                }) {
+                                    Image(systemName: "xmark.circle.fill")
+                                        .foregroundColor(.red)
+                                        .padding(4)
+                                }
+                            }
                         }
                     }
-                    .padding(10)
+                    .padding(.horizontal)
                 }
-                .transition(.opacity)
             }
 
-            // INLINE IMAGE PICKER (Keyboard-sized)
             if showPicker {
                 ImagePickerGrid(selectedImages: $selectedImages, selectedPhotoItems: $selectedPhotoItems)
-                    .frame(height: 300) // Mimic keyboard height
+                    .frame(height: 300)
                     .transition(.move(edge: .bottom))
             }
 
             HStack {
                 Button(action: {
-                    showPicker.toggle() // Show picker inline
+                    if selectedImages.count < 10 {
+                        showPicker.toggle()
+                    }
                 }) {
                     Image(systemName: "photo.on.rectangle.fill")
                         .font(.title2)
@@ -68,8 +81,10 @@ struct BottomSheet: View {
                         .background(Color.blue)
                         .clipShape(Circle())
                 }
+                .disabled(selectedImages.count >= 10)
 
                 Spacer()
+
                 SendMessageButton(action: onSend)
             }
             .padding([.leading, .trailing, .bottom], 16)
@@ -79,25 +94,76 @@ struct BottomSheet: View {
                 .fill(Color(UIColor.systemBackground))
                 .shadow(radius: 10)
         )
+        .frame(height: sheetHeight)
         .offset(y: dragOffset)
         .gesture(
             DragGesture()
-                .updating($dragOffset) { value, state, _ in
-                    state = value.translation.height
+                .updating($isDragging) { _, state, _ in
+                    state = true
+                }
+                .onChanged { value in
+                    dragOffset = value.translation.height + currentOffset
                 }
                 .onEnded { value in
-                    if value.translation.height < -100 {
-                        sheetState = .expanded
-                    } else if value.translation.height > 100 {
-                        sheetState = .compact
-                        showPicker = false
+                    let velocity = value.predictedEndTranslation.height
+
+                    if dragOffset + velocity < -100 {
+                        expandSheet()
+                    } else if dragOffset + velocity > 100 {
+                        collapseSheet()
+                    } else {
+                        resetSheet()
                     }
                 }
         )
-        .animation(.easeInOut(duration: 0.3), value: sheetState)
+        .animation(.interactiveSpring(), value: dragOffset)
+        .onChange(of: sheetState) { _ in
+            updateOffset()
+        }
+        .onAppear {
+            updateOffset()
+        }
+    }
+
+    private var sheetHeight: CGFloat {
+        sheetState == .expanded ? expandedHeight : compactHeight
+    }
+
+    private func expandSheet() {
+        withAnimation(.spring()) {
+            sheetState = .expanded
+            dragOffset = 0
+            currentOffset = 0
+            triggerHaptic()
+        }
+    }
+
+    private func collapseSheet() {
+        withAnimation(.spring()) {
+            sheetState = .compact
+            dragOffset = 0
+            currentOffset = 0
+            showPicker = false
+            triggerHaptic()
+        }
+    }
+
+    private func resetSheet() {
+        withAnimation(.spring()) {
+            dragOffset = 0
+        }
+    }
+
+    private func updateOffset() {
+        currentOffset = 0
+        dragOffset = 0
+    }
+
+    private func triggerHaptic() {
+        let generator = UIImpactFeedbackGenerator(style: .medium)
+        generator.impactOccurred()
     }
 }
-
 
 extension PhotosPickerItem {
     func loadUIImage() async -> UIImage? {
@@ -137,26 +203,6 @@ struct HorizontalImageScroll: View {
                     }
                 }
             }
-        }
-    }
-}
-
-struct ImageSelectionButton: View {
-    @Binding var sheetState: SheetState
-    @Binding var selectedImages: [UIImage]
-    @State private var showImagePicker = false
-
-    var body: some View {
-        Button(action: { showImagePicker.toggle() }) {
-            Image(systemName: "photo.on.rectangle.fill")
-                .font(.title2)
-                .foregroundColor(.white)
-                .padding()
-                .background(Color.blue)
-                .clipShape(Circle())
-        }
-        .sheet(isPresented: $showImagePicker) {
-            ImagePickerSheet(sheetState: $sheetState, selectedImages: $selectedImages)
         }
     }
 }

@@ -22,14 +22,24 @@ struct ChatView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             VStack {
-                ScrollViewReader { scrollView in
+                ScrollViewReader { proxy in
                     ScrollView {
                         VStack(spacing: 10) {
-                            ForEach(messages) { msg in
-                                ChatBubble(message: msg)
+                            if messages.isEmpty {
+                                Text("Start the conversation...")
+                                    .foregroundColor(.gray)
+                                    .padding(.top, 100)
+                            } else {
+                                ForEach(messages) { msg in
+                                    ChatBubble(message: msg)
+                                        .id(msg.id)
+                                }
                             }
                         }
                         .padding()
+                    }
+                    .onChange(of: messages) { _ in
+                        scrollToBottom(proxy)
                     }
                 }
             }
@@ -37,10 +47,16 @@ struct ChatView: View {
             .disabled(sheetState == .expanded)
             .onTapGesture {
                 withAnimation {
-                    sheetState = .expanded
+                    if sheetState == .compact {
+                        sheetState = .expanded
+                    } else {
+                        sheetState = .compact
+                        isFocused = false
+                        showPicker = false
+                    }
                 }
             }
-            
+
             if sheetState == .expanded {
                 Color.black.opacity(0.3)
                     .ignoresSafeArea()
@@ -73,12 +89,21 @@ struct ChatView: View {
         }
     }
 
-    func sendMessage() {
+    private func scrollToBottom(_ proxy: ScrollViewProxy) {
+        if let last = messages.last {
+            withAnimation {
+                proxy.scrollTo(last.id, anchor: .bottom)
+            }
+        }
+    }
+
+    private func sendMessage() {
         guard !message.trimmingCharacters(in: .whitespaces).isEmpty else { return }
-        
+
         let userMessage = Message(id: UUID(), images: selectedImages, text: message, isUser: true)
         messages.append(userMessage)
         message = ""
+        selectedImages.removeAll()
     }
 }
 
