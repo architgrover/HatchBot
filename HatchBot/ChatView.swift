@@ -11,7 +11,7 @@ import PhotosUI
 
 struct ChatView: View {
     @State private var message = ""
-    @State private var messages: [Message] = []
+    @State private var messages: [Message] = [] // List of messages
     @State private var sheetState: SheetState = .compact
     @State private var fontSize: CGFloat = DynamicFontSettings.large
     @State private var selectedImages: [UIImage] = []
@@ -22,23 +22,14 @@ struct ChatView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             VStack {
-                ScrollViewReader { scrollView in
-                    ScrollView {
-                        VStack(spacing: 10) {
-                            ForEach(messages) { msg in
-                                ChatBubble(message: msg)
-                                    .swipeActions {
-                                        Button(role: .destructive) {
-                                            deleteMessage(msg)
-                                        } label: {
-                                            Label("Delete", systemImage: "trash.fill")
-                                        }
-                                    }
-                            }
-                        }
-                        .padding()
+                List {
+                    ForEach(messages) { msg in
+                        ChatBubble(message: msg, onDelete: deleteMessage)
+                            .listRowSeparator(.hidden) // Hides separator for smoother UI
+                            .listRowBackground(Color.clear) // Keeps background transparent
                     }
                 }
+                .scrollContentBackground(.hidden) // Removes default list background
             }
             .blur(radius: sheetState == .expanded ? 5 : 0)
             .disabled(sheetState == .expanded)
@@ -67,7 +58,6 @@ struct ChatView: View {
             )
             .focused($isFocused)
         }
-        .ignoresSafeArea(.keyboard)
         .navigationTitle("Chat with AI")
         .onAppear {
             PHPhotoLibrary.requestAuthorization { status in
@@ -78,20 +68,21 @@ struct ChatView: View {
 
     func sendMessage() {
         guard !message.trimmingCharacters(in: .whitespaces).isEmpty else { return }
+        
         let userMessage = Message(id: UUID(), images: selectedImages, text: message, isUser: true)
         messages.append(userMessage)
         message = ""
-        selectedImages = []
+        selectedImages.removeAll() // Clear selected images after sending
     }
 
     func deleteMessage(_ message: Message) {
         if let index = messages.firstIndex(where: { $0.id == message.id }) {
-            messages.remove(at: index)
+            withAnimation {
+                messages.remove(at: index) // Delete the message from the array
+            }
         }
     }
 }
-
-
 
 struct Message: Identifiable, Equatable {
     var id: UUID

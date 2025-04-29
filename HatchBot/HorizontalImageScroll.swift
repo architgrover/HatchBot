@@ -7,38 +7,26 @@
 
 import SwiftUI
 
-import SwiftUI
-
-struct HorizontalImageScroll: View {
+struct HorizontalImageScrollView: View {
     @Binding var selectedImages: [UIImage]
 
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 10) {
-                ForEach(selectedImages.indices, id: \.self) { index in
-                    ZStack {
-                        Image(uiImage: selectedImages[index])
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 80, height: 80)
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
-
-                        // Delete button to unselect image
-                        Button(action: {
-                            // Remove the image at the current index
-                            selectedImages.remove(at: index)
-                        }) {
-                            Image(systemName: "x.circle.fill")
-                                .resizable()
-                                .frame(width: 20, height: 20)
-                                .foregroundColor(.red)
-                                .padding(4)
+        ScrollView(.horizontal) {
+            HStack {
+                ForEach(selectedImages, id: \.self) { image in
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 50, height: 50)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .onTapGesture {
+                            if let index = selectedImages.firstIndex(of: image) {
+                                selectedImages.remove(at: index)
+                            }
                         }
-                        .position(x: 70, y: 10)  // Position the "delete" button at the top-right corner of the image
-                    }
                 }
             }
-            .padding(10)
         }
     }
 }
+

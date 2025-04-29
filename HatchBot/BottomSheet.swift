@@ -16,7 +16,7 @@ struct BottomSheet: View {
     @Binding var fontSize: CGFloat
     @Binding var showPicker: Bool
     @Binding var selectedPhotoItems: [PhotosPickerItem]
-
+    
     @GestureState private var dragOffset: CGFloat = 0
 
     var body: some View {
@@ -26,49 +26,14 @@ struct BottomSheet: View {
                 .foregroundColor(.gray.opacity(0.5))
                 .padding(.top, 8)
 
-            HStack {
-                Spacer()
-                Button(action: {
-                    withAnimation {
-                        sheetState = sheetState == .compact ? .expanded : .compact
-                        if sheetState == .compact {
-                            showPicker = false
-                        }
-                    }
-                }) {
-                    Image(systemName: sheetState == .compact ? "chevron.up" : "chevron.down")
-                        .padding(6)
-                        .background(Color.gray.opacity(0.2))
-                        .clipShape(Circle())
-                }
-                .padding(.trailing)
-            }
+            DynamicTextEditor(text: $message, fontSize: $fontSize)
+                .frame(minHeight: 80, maxHeight: sheetState == .expanded ? 300 : 120)
+                .padding(.horizontal)
+                .padding(.bottom, 8)
 
             if !selectedImages.isEmpty {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
-                        ForEach(selectedImages.indices, id: \.self) { index in
-                            ZStack(alignment: .topTrailing) {
-                                Image(uiImage: selectedImages[index])
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 80, height: 80)
-                                    .clipShape(RoundedRectangle(cornerRadius: 8))
-
-                                Button(action: {
-                                    selectedImages.remove(at: index)
-                                }) {
-                                    Image(systemName: "xmark.circle.fill")
-                                        .foregroundColor(.white)
-                                        .background(Color.black.opacity(0.6))
-                                        .clipShape(Circle())
-                                }
-                                .offset(x: 5, y: -5)
-                            }
-                        }
-                    }
-                    .padding(.horizontal)
-                }
+                HorizontalImageScrollView(selectedImages: $selectedImages)
+                    .transition(.opacity)
             }
 
             if showPicker {
@@ -77,15 +42,9 @@ struct BottomSheet: View {
                     .transition(.move(edge: .bottom))
             }
 
-            DynamicTextEditor(text: $message, fontSize: $fontSize)
-                .frame(minHeight: 80, maxHeight: sheetState == .expanded && !showPicker ? 300 : 120)
-                .padding(.horizontal)
-
             HStack {
                 Button(action: {
-                    withAnimation {
-                        showPicker.toggle()
-                    }
+                    showPicker.toggle() // Show picker inline
                 }) {
                     Image(systemName: "photo.on.rectangle.fill")
                         .font(.title2)
@@ -96,7 +55,6 @@ struct BottomSheet: View {
                 }
 
                 Spacer()
-
                 SendMessageButton(action: onSend)
             }
             .padding([.leading, .trailing, .bottom], 16)
@@ -106,6 +64,7 @@ struct BottomSheet: View {
                 .fill(Color(UIColor.systemBackground))
                 .shadow(radius: 10)
         )
+        .offset(y: dragOffset)
         .gesture(
             DragGesture()
                 .updating($dragOffset) { value, state, _ in
@@ -113,22 +72,16 @@ struct BottomSheet: View {
                 }
                 .onEnded { value in
                     if value.translation.height < -100 {
-                        withAnimation { sheetState = .expanded }
+                        sheetState = .expanded
                     } else if value.translation.height > 100 {
-                        withAnimation {
-                            sheetState = .compact
-                            showPicker = false
-                        }
+                        sheetState = .compact
+                        showPicker = false
                     }
                 }
         )
-        .offset(y: dragOffset)
         .animation(.easeInOut(duration: 0.3), value: sheetState)
-        .ignoresSafeArea(edges: .bottom)
     }
 }
-
-
 
 extension PhotosPickerItem {
     func loadUIImage() async -> UIImage? {
