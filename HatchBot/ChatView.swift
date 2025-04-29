@@ -22,40 +22,26 @@ struct ChatView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             VStack {
-                ScrollViewReader { proxy in
+                ScrollViewReader { scrollView in
                     ScrollView {
                         VStack(spacing: 10) {
-                            if messages.isEmpty {
-                                Text("Start the conversation...")
-                                    .foregroundColor(.gray)
-                                    .padding(.top, 100)
-                            } else {
-                                ForEach(messages) { msg in
-                                    ChatBubble(message: msg)
-                                        .id(msg.id)
-                                }
+                            ForEach(messages) { msg in
+                                ChatBubble(message: msg)
+                                    .swipeActions {
+                                        Button(role: .destructive) {
+                                            deleteMessage(msg)
+                                        } label: {
+                                            Label("Delete", systemImage: "trash.fill")
+                                        }
+                                    }
                             }
                         }
                         .padding()
-                    }
-                    .onChange(of: messages) { _ in
-                        scrollToBottom(proxy)
                     }
                 }
             }
             .blur(radius: sheetState == .expanded ? 5 : 0)
             .disabled(sheetState == .expanded)
-            .onTapGesture {
-                withAnimation {
-                    if sheetState == .compact {
-                        sheetState = .expanded
-                    } else {
-                        sheetState = .compact
-                        isFocused = false
-                        showPicker = false
-                    }
-                }
-            }
 
             if sheetState == .expanded {
                 Color.black.opacity(0.3)
@@ -81,6 +67,7 @@ struct ChatView: View {
             )
             .focused($isFocused)
         }
+        .ignoresSafeArea(.keyboard)
         .navigationTitle("Chat with AI")
         .onAppear {
             PHPhotoLibrary.requestAuthorization { status in
@@ -89,27 +76,26 @@ struct ChatView: View {
         }
     }
 
-    private func scrollToBottom(_ proxy: ScrollViewProxy) {
-        if let last = messages.last {
-            withAnimation {
-                proxy.scrollTo(last.id, anchor: .bottom)
-            }
-        }
-    }
-
-    private func sendMessage() {
+    func sendMessage() {
         guard !message.trimmingCharacters(in: .whitespaces).isEmpty else { return }
-
         let userMessage = Message(id: UUID(), images: selectedImages, text: message, isUser: true)
         messages.append(userMessage)
         message = ""
-        selectedImages.removeAll()
+        selectedImages = []
+    }
+
+    func deleteMessage(_ message: Message) {
+        if let index = messages.firstIndex(where: { $0.id == message.id }) {
+            messages.remove(at: index)
+        }
     }
 }
 
+
+
 struct Message: Identifiable, Equatable {
     var id: UUID
-    let images: [UIImage]?
+    let images: [UIImage]
     var text: String
     var isUser: Bool
 }

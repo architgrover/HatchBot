@@ -19,8 +19,9 @@ struct ImagePickerGrid: View {
                 .font(.headline)
                 .padding(.top, 8)
 
+            // Show fetched library images directly
             ScrollView {
-                LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 3), spacing: 5) {
+                LazyVGrid(columns: Array(repeating: GridItem(), count: 3), spacing: 5) {
                     ForEach(libraryImages.indices, id: \.self) { index in
                         Image(uiImage: libraryImages[index])
                             .resizable()
@@ -28,9 +29,9 @@ struct ImagePickerGrid: View {
                             .frame(width: 80, height: 80)
                             .clipShape(RoundedRectangle(cornerRadius: 8))
                             .onTapGesture {
-                                if selectedImages.count < 10 {
-                                    selectedImages.append(libraryImages[index])
-                                }
+                                print("Tapped on image at index \(index)")
+                                selectedImages.append(libraryImages[index])
+                                print("Selected images count: \(selectedImages.count)")
                             }
                     }
                 }
@@ -39,27 +40,28 @@ struct ImagePickerGrid: View {
         }
         .background(Color(.systemBackground))
         .cornerRadius(15)
-        .frame(maxHeight: 300)
+        .frame(maxHeight: 300) // Mimic keyboard height
         .onAppear {
             fetchLibraryImages()
         }
     }
 
-    private func fetchLibraryImages() {
+    func fetchLibraryImages() {
         let fetchOptions = PHFetchOptions()
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
-        fetchOptions.fetchLimit = 30
-        
-        let assets = PHAsset.fetchAssets(with: .image, options: fetchOptions)
-        let manager = PHCachingImageManager()
+        fetchOptions.fetchLimit = 15
 
-        DispatchQueue.global(qos: .userInitiated).async {
-            assets.enumerateObjects { asset, _, _ in
-                manager.requestImage(for: asset, targetSize: CGSize(width: 100, height: 100), contentMode: .aspectFill, options: nil) { image, _ in
-                    if let image = image {
-                        DispatchQueue.main.async {
-                            libraryImages.append(image)
-                        }
+        let assets = PHAsset.fetchAssets(with: .image, options: fetchOptions)
+        let manager = PHImageManager.default()
+
+        assets.enumerateObjects { asset, _, _ in
+            let requestOptions = PHImageRequestOptions()
+            requestOptions.isSynchronous = true
+
+            manager.requestImage(for: asset, targetSize: CGSize(width: 100, height: 100), contentMode: .aspectFill, options: requestOptions) { image, _ in
+                if let image = image {
+                    DispatchQueue.main.async {
+                        libraryImages.append(image)
                     }
                 }
             }

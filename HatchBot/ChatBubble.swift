@@ -12,9 +12,9 @@ struct ChatBubble: View {
 
     var body: some View {
         VStack(alignment: message.isUser ? .trailing : .leading) {
-            if let images = message.images, !images.isEmpty {
+            if !message.images.isEmpty {
                 HStack {
-                    ForEach(images, id: \.self) { image in
+                    ForEach(message.images, id: \.self) { image in
                         Image(uiImage: image)
                             .resizable()
                             .frame(width: 50, height: 50)
