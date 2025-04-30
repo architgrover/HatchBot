@@ -19,6 +19,8 @@ struct BottomSheet: View {
     @GestureState private var dragOffset: CGFloat = 0
     @FocusState private var isTextFieldFocused: Bool
     @State private var wasPickerOpenInExpanded: Bool = false
+    
+    let suggestions: [String] = ["🚀 Let's go!", "🔥 Lit!", "💡 Genius!", "🎉 Party time!", "😂 LOL", "❤️ Love it!"]
 
     var body: some View {
         VStack(spacing: 0) {
@@ -68,6 +70,24 @@ struct BottomSheet: View {
                 }
                 .padding(.top, 44) // Increased padding to avoid overlap with nav bar
             } else {
+                
+                ScrollView(.horizontal, showsIndicators: false) {
+                                HStack {
+                                    ForEach(suggestions, id: \.self) { suggestion in
+                                        Text(suggestion)
+                                            .padding(.horizontal, 12)
+                                            .padding(.vertical, 6)
+                                            .background(Color.blue.opacity(0.2))
+                                            .cornerRadius(20)
+                                            .onTapGesture {
+                                                message += " \(suggestion)"
+                                            }
+                                    }
+                                }
+                                .padding(.horizontal)
+                            }
+                .padding([.top, .bottom], 8)
+                
                 // Show text field in compact or when picker is not open in expanded
                 DynamicTextEditor(text: $message, fontSize: $fontSize)
                     .frame(minHeight: 80, maxHeight: sheetState == .expanded ? 300 : 120)
