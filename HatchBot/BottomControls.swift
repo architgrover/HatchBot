@@ -9,8 +9,8 @@ import SwiftUI
 
 struct BottomControls: View {
     var onSend: () -> Void
+    
     @Binding var showPicker: Bool
-    var safeBottom: CGFloat
 
     var body: some View {
         HStack {
@@ -19,7 +19,7 @@ struct BottomControls: View {
             SendMessageButton(action: onSend)
         }
         .padding(.horizontal)
-        .padding(.bottom, max(safeBottom, 16))
+        .padding(.bottom, 16)
     }
 }
 

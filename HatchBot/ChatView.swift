@@ -25,6 +25,22 @@ struct ChatView: View {
         ZStack(alignment: .bottom) {
             VStack(spacing: 0) {
                 GeometryReader { geometry in
+                    if messages.isEmpty {
+                        VStack {
+                            Spacer()
+                            HStack {
+                                Spacer()
+                                Text("Nothing here yet. Let’s hatch a conversation! 🐣")
+                                    .font(.title3)
+                                    .foregroundColor(.gray)
+                                    .multilineTextAlignment(.center)
+                                    .padding()
+                                Spacer()
+                            }
+                            Spacer()
+                        }
+                    }
+                    
                     ScrollViewReader { proxy in
                         List {
                             ForEach(messages) { msg in
@@ -37,11 +53,10 @@ struct ChatView: View {
                         .scrollContentBackground(.hidden)
                         .padding(.top, 50)
                         .padding(.bottom, bottomSheetHeight + keyboardHeight)
-                        .onChange(of: messages.count) { _ in
+                        .onChange(of: messages.count) { _,_ in
                             scrollToLastMessage(proxy: proxy)
                         }
-                        .onChange(of: keyboardHeight) { _ in
-                            // Scroll on keyboard show
+                        .onChange(of: keyboardHeight) { _,_ in
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                                 scrollToLastMessage(proxy: proxy)
                             }
@@ -78,7 +93,7 @@ struct ChatView: View {
                         .onAppear {
                             bottomSheetHeight = geo.size.height
                         }
-                        .onChange(of: geo.size.height) { newHeight in
+                        .onChange(of: geo.size.height) { _, newHeight in
                             bottomSheetHeight = newHeight
                         }
                 }

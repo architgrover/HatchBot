@@ -92,7 +92,7 @@ struct BottomSheet: View {
                     .padding(.horizontal)
                     .padding(.bottom, 8)
                     .focused($isTextFieldFocused)
-                    .onChange(of: isTextFieldFocused) { focused in
+                    .onChange(of: isTextFieldFocused) { _, focused in
                         if focused {
                             showPicker = false
                             wasPickerOpenInExpanded = false
@@ -132,8 +132,7 @@ struct BottomSheet: View {
                                     showPicker = newValue
                                 }
                             }
-                        ),
-                        safeBottom: 0
+                        )
                     )
                 }
                 .padding(.horizontal)
