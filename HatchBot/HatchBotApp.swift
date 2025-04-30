@@ -11,7 +11,9 @@ import SwiftUI
 struct HatchBotApp: App {
     var body: some Scene {
         WindowGroup {
-            ChatView()
+            NavigationStack {
+                ChatView()
+            }
         }
     }
 }

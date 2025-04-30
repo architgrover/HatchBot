@@ -6,30 +6,37 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		327942D72DC1D2A800BA2F87 /* BottomControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327942CA2DC1D2A800BA2F87 /* BottomControls.swift */; };
+		327942D82DC1D2A800BA2F87 /* BottomSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327942CB2DC1D2A800BA2F87 /* BottomSheet.swift */; };
+		327942D92DC1D2A800BA2F87 /* ChatBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327942CC2DC1D2A800BA2F87 /* ChatBubble.swift */; };
+		327942DA2DC1D2A800BA2F87 /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327942CD2DC1D2A800BA2F87 /* ChatView.swift */; };
+		327942DB2DC1D2A800BA2F87 /* DynamicContentArea.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327942CE2DC1D2A800BA2F87 /* DynamicContentArea.swift */; };
+		327942DC2DC1D2A800BA2F87 /* DynamicTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327942CF2DC1D2A800BA2F87 /* DynamicTextEditor.swift */; };
+		327942DD2DC1D2A800BA2F87 /* HatchBotApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327942D02DC1D2A800BA2F87 /* HatchBotApp.swift */; };
+		327942DE2DC1D2A800BA2F87 /* HorizontalImageScroll.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327942D12DC1D2A800BA2F87 /* HorizontalImageScroll.swift */; };
+		327942DF2DC1D2A800BA2F87 /* ImagePickerGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327942D22DC1D2A800BA2F87 /* ImagePickerGrid.swift */; };
+		327942E02DC1D2A800BA2F87 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327942D42DC1D2A800BA2F87 /* Message.swift */; };
+		327942E12DC1D2A800BA2F87 /* SheetState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327942D52DC1D2A800BA2F87 /* SheetState.swift */; };
+		327942E22DC1D2A800BA2F87 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 327942C92DC1D2A800BA2F87 /* Assets.xcassets */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
+		327942C92DC1D2A800BA2F87 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		327942CA2DC1D2A800BA2F87 /* BottomControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomControls.swift; sourceTree = "<group>"; };
+		327942CB2DC1D2A800BA2F87 /* BottomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSheet.swift; sourceTree = "<group>"; };
+		327942CC2DC1D2A800BA2F87 /* ChatBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatBubble.swift; sourceTree = "<group>"; };
+		327942CD2DC1D2A800BA2F87 /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
+		327942CE2DC1D2A800BA2F87 /* DynamicContentArea.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicContentArea.swift; sourceTree = "<group>"; };
+		327942CF2DC1D2A800BA2F87 /* DynamicTextEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicTextEditor.swift; sourceTree = "<group>"; };
+		327942D02DC1D2A800BA2F87 /* HatchBotApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HatchBotApp.swift; sourceTree = "<group>"; };
+		327942D12DC1D2A800BA2F87 /* HorizontalImageScroll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalImageScroll.swift; sourceTree = "<group>"; };
+		327942D22DC1D2A800BA2F87 /* ImagePickerGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerGrid.swift; sourceTree = "<group>"; };
+		327942D32DC1D2A800BA2F87 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		327942D42DC1D2A800BA2F87 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		327942D52DC1D2A800BA2F87 /* SheetState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetState.swift; sourceTree = "<group>"; };
 		32CD3B122DBFDA5000AAE46D /* HatchBot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HatchBot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		3299344A2DC044E700ED9C72 /* Exceptions for "HatchBot" folder in "HatchBot" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = 32CD3B112DBFDA5000AAE46D /* HatchBot */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		32CD3B142DBFDA5000AAE46D /* HatchBot */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				3299344A2DC044E700ED9C72 /* Exceptions for "HatchBot" folder in "HatchBot" target */,
-			);
-			path = HatchBot;
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		32CD3B0F2DBFDA5000AAE46D /* Frameworks */ = {
@@ -42,10 +49,30 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		327942D62DC1D2A800BA2F87 /* HatchBot */ = {
+			isa = PBXGroup;
+			children = (
+				327942C92DC1D2A800BA2F87 /* Assets.xcassets */,
+				327942CA2DC1D2A800BA2F87 /* BottomControls.swift */,
+				327942CB2DC1D2A800BA2F87 /* BottomSheet.swift */,
+				327942CC2DC1D2A800BA2F87 /* ChatBubble.swift */,
+				327942CD2DC1D2A800BA2F87 /* ChatView.swift */,
+				327942CE2DC1D2A800BA2F87 /* DynamicContentArea.swift */,
+				327942CF2DC1D2A800BA2F87 /* DynamicTextEditor.swift */,
+				327942D02DC1D2A800BA2F87 /* HatchBotApp.swift */,
+				327942D12DC1D2A800BA2F87 /* HorizontalImageScroll.swift */,
+				327942D22DC1D2A800BA2F87 /* ImagePickerGrid.swift */,
+				327942D32DC1D2A800BA2F87 /* Info.plist */,
+				327942D42DC1D2A800BA2F87 /* Message.swift */,
+				327942D52DC1D2A800BA2F87 /* SheetState.swift */,
+			);
+			path = HatchBot;
+			sourceTree = "<group>";
+		};
 		32CD3B092DBFDA5000AAE46D = {
 			isa = PBXGroup;
 			children = (
-				32CD3B142DBFDA5000AAE46D /* HatchBot */,
+				327942D62DC1D2A800BA2F87 /* HatchBot */,
 				32CD3B132DBFDA5000AAE46D /* Products */,
 			);
 			sourceTree = "<group>";
@@ -72,9 +99,6 @@
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				32CD3B142DBFDA5000AAE46D /* HatchBot */,
 			);
 			name = HatchBot;
 			packageProductDependencies = (
@@ -122,6 +146,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				327942E22DC1D2A800BA2F87 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -132,6 +157,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				327942D72DC1D2A800BA2F87 /* BottomControls.swift in Sources */,
+				327942D82DC1D2A800BA2F87 /* BottomSheet.swift in Sources */,
+				327942D92DC1D2A800BA2F87 /* ChatBubble.swift in Sources */,
+				327942DA2DC1D2A800BA2F87 /* ChatView.swift in Sources */,
+				327942DB2DC1D2A800BA2F87 /* DynamicContentArea.swift in Sources */,
+				327942DC2DC1D2A800BA2F87 /* DynamicTextEditor.swift in Sources */,
+				327942DD2DC1D2A800BA2F87 /* HatchBotApp.swift in Sources */,
+				327942DE2DC1D2A800BA2F87 /* HorizontalImageScroll.swift in Sources */,
+				327942DF2DC1D2A800BA2F87 /* ImagePickerGrid.swift in Sources */,
+				327942E02DC1D2A800BA2F87 /* Message.swift in Sources */,
+				327942E12DC1D2A800BA2F87 /* SheetState.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

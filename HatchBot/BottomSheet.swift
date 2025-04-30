@@ -43,21 +43,9 @@ struct BottomSheet: View {
             }
 
             HStack {
-                Button(action: {
-                    showPicker.toggle() // Show picker inline
-                }) {
-                    Image(systemName: "photo.on.rectangle.fill")
-                        .font(.title2)
-                        .foregroundColor(.white)
-                        .padding()
-                        .background(Color.blue)
-                        .clipShape(Circle())
-                }
-
-                Spacer()
-                SendMessageButton(action: onSend)
+                BottomControls(onSend: onSend, showPicker: $showPicker, safeBottom: 0)
             }
-            .padding([.leading, .trailing, .bottom], 16)
+            .padding([.leading, .trailing], 0)
         }
         .background(
             RoundedRectangle(cornerRadius: 20)
@@ -94,21 +82,5 @@ extension PhotosPickerItem {
             print("Failed to load image:", error)
         }
         return nil
-    }
-}
-
-struct SendMessageButton: View {
-    var action : () -> Void
-    var body: some View {
-        Button(action: {
-            action()
-        }) {
-            Image(systemName: "paperplane.fill")
-                .font(.title2)
-                .foregroundColor(.white)
-                .padding()
-                .background(Color.blue)
-                .clipShape(Circle())
-        }
     }
 }

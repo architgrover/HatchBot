@@ -14,27 +14,44 @@ struct BottomControls: View {
 
     var body: some View {
         HStack {
-            // Photo Picker Button
-            Button(action: {
-                withAnimation {
-                    showPicker.toggle()
-                }
-            }) {
-                Image(systemName: "photo.on.rectangle.fill")
-                    .font(.title2)
-                    .foregroundColor(.white)
-                    .padding()
-                    .background(Color.blue)
-                    .clipShape(Circle())
-            }
-
+            PhotoPickerButton(showPicker: $showPicker)
             Spacer()
-
-            // Send Message Button
             SendMessageButton(action: onSend)
         }
         .padding(.horizontal)
-        .padding(.bottom, max(safeBottom, 16)) // Adjusted bottom padding
+        .padding(.bottom, max(safeBottom, 16))
     }
 }
 
+struct PhotoPickerButton: View {
+    @Binding var showPicker: Bool
+
+    var body: some View {
+        Button(action: {
+                showPicker.toggle()
+        }) {
+            Image(systemName: "photo.on.rectangle.fill")
+                .font(.title2)
+                .foregroundColor(.white)
+                .padding()
+                .background(Color.blue)
+                .clipShape(Circle())
+        }
+    }
+}
+
+struct SendMessageButton: View {
+    var action : () -> Void
+    var body: some View {
+        Button(action: {
+            action()
+        }) {
+            Image(systemName: "paperplane.fill")
+                .font(.title2)
+                .foregroundColor(.white)
+                .padding()
+                .background(Color.blue)
+                .clipShape(Circle())
+        }
+    }
+}
