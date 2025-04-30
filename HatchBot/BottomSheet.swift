@@ -20,7 +20,7 @@ struct BottomSheet: View {
     @FocusState private var isTextFieldFocused: Bool
     @State private var wasPickerOpenInExpanded: Bool = false
     
-    let suggestions: [String] = ["🚀 Let's go!", "🔥 Lit!", "💡 Genius!", "🎉 Party time!", "😂 LOL", "❤️ Love it!"]
+    let chips: [String] = ["🚀 Let's go!", "🔥 Lit!", "💡 Genius!", "🎉 Party time!", "😂 LOL", "❤️ Love it!"]
 
     var body: some View {
         VStack(spacing: 0) {
@@ -34,12 +34,11 @@ struct BottomSheet: View {
                     Spacer()
                     Button(action: {
                         withAnimation {
+                            isTextFieldFocused = false
                             if sheetState == .expanded && showPicker {
-                                // When in expanded with picker, go to compact and keep picker
                                 sheetState = .compact
                                 wasPickerOpenInExpanded = false
                             } else {
-                                // Toggle between compact and expanded
                                 sheetState = sheetState == .expanded ? .compact : .expanded
                                 if sheetState == .compact && !wasPickerOpenInExpanded {
                                     showPicker = false
@@ -70,10 +69,9 @@ struct BottomSheet: View {
                 }
                 .padding(.top, 44) // Increased padding to avoid overlap with nav bar
             } else {
-                
                 ScrollView(.horizontal, showsIndicators: false) {
                                 HStack {
-                                    ForEach(suggestions, id: \.self) { suggestion in
+                                    ForEach(chips, id: \.self) { suggestion in
                                         Text(suggestion)
                                             .padding(.horizontal, 12)
                                             .padding(.vertical, 6)
@@ -157,11 +155,13 @@ struct BottomSheet: View {
                     withAnimation {
                         if value.translation.height < -100 {
                             sheetState = .expanded
+                            isTextFieldFocused = false
                             if showPicker {
                                 wasPickerOpenInExpanded = true
                             }
                         } else if value.translation.height > 100 {
                             sheetState = .compact
+                            isTextFieldFocused = false
                             if wasPickerOpenInExpanded {
                                 showPicker = true
                             } else {

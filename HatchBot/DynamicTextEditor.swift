@@ -12,15 +12,25 @@ struct DynamicTextEditor: View {
     @Binding var fontSize: CGFloat
     
     var body: some View {
-        TextEditor(text: $text)
-            .font(.system(size: fontSize))
-            .frame(minHeight: 80)
-            .scrollContentBackground(.hidden)
-            .background(Color.gray.opacity(0.05))
-            .cornerRadius(12)
-            .onChange(of: text) { _, _ in
-                adjustFontSize()
+        ZStack(alignment: .topLeading) {
+            TextEditor(text: $text)
+                .font(.system(size: fontSize))
+                .frame(minHeight: 80)
+                .scrollContentBackground(.hidden)
+                .background(Color.gray.opacity(0.05))
+                .cornerRadius(12)
+                .onChange(of: text) { _, _ in
+                    adjustFontSize()
+                }
+
+            // Placeholder Text
+            if text.isEmpty {
+                Text("Start Typing...")
+                    .foregroundColor(.gray)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 12)
             }
+        }
     }
     
     private func adjustFontSize() {
