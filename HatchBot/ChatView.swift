@@ -35,7 +35,7 @@ struct ChatView: View {
                             }
                         }
                         .scrollContentBackground(.hidden)
-                        .padding(.top, 46)
+                        .padding(.top, 50)
                         .padding(.bottom, bottomSheetHeight + keyboardHeight)
                         .onChange(of: messages.count) { _ in
                             scrollToLastMessage(proxy: proxy)
@@ -164,8 +164,9 @@ struct ChatView: View {
     }
 
     func scrollToLastMessage(proxy: ScrollViewProxy) {
-        if let last = messages.last {
-            withAnimation(.easeOut(duration: 0.3)) {
+        guard let last = messages.last else { return }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+            withAnimation(.easeOut(duration: 0.35)) {
                 proxy.scrollTo(last.id, anchor: .bottom)
             }
         }

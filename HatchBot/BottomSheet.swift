@@ -16,20 +16,44 @@ struct BottomSheet: View {
     @Binding var fontSize: CGFloat
     @Binding var showPicker: Bool
     @Binding var selectedPhotoItems: [PhotosPickerItem]
-    
+
     @GestureState private var dragOffset: CGFloat = 0
+    @FocusState private var isTextFieldFocused: Bool
 
     var body: some View {
         VStack(spacing: 10) {
-            Capsule()
-                .frame(width: 40, height: 6)
-                .foregroundColor(.gray.opacity(0.5))
-                .padding(.top, 8)
+            ZStack {
+                Capsule()
+                    .frame(width: 40, height: 6)
+                    .foregroundColor(.gray.opacity(0.5))
+                    .padding(.top, 12)
+
+                HStack {
+                    Spacer()
+                    Button(action: {
+                        withAnimation {
+                            sheetState = sheetState == .expanded ? .compact : .expanded
+                        }
+                    }) {
+                        Image(systemName: "arrow.up.arrow.down.circle")
+                            .font(.title2)
+                            .foregroundColor(.gray)
+                            .padding(.top, 8)
+                            .padding(.trailing, 12)
+                    }
+                }
+            }
 
             DynamicTextEditor(text: $message, fontSize: $fontSize)
                 .frame(minHeight: 80, maxHeight: sheetState == .expanded ? 300 : 120)
                 .padding(.horizontal)
                 .padding(.bottom, 8)
+                .focused($isTextFieldFocused)
+                .onChange(of: isTextFieldFocused) { focused in
+                    if focused {
+                        showPicker = false
+                    }
+                }
 
             if !selectedImages.isEmpty {
                 HorizontalImageScrollView(selectedImages: $selectedImages)
@@ -43,9 +67,23 @@ struct BottomSheet: View {
             }
 
             HStack {
-                BottomControls(onSend: onSend, showPicker: $showPicker, safeBottom: 0)
+                BottomControls(
+                    onSend: onSend,
+                    showPicker: Binding(
+                        get: { showPicker },
+                        set: { newValue in
+                            withAnimation {
+                                showPicker = newValue
+                                if newValue {
+                                    isTextFieldFocused = false // hide keyboard
+                                }
+                            }
+                        }
+                    ),
+                    safeBottom: 0
+                )
             }
-            .padding([.leading, .trailing], 0)
+            .padding(.horizontal)
         }
         .background(
             RoundedRectangle(cornerRadius: 20)
@@ -60,10 +98,14 @@ struct BottomSheet: View {
                 }
                 .onEnded { value in
                     if value.translation.height < -100 {
-                        sheetState = .expanded
+                        withAnimation {
+                            sheetState = .expanded
+                        }
                     } else if value.translation.height > 100 {
-                        sheetState = .compact
-                        showPicker = false
+                        withAnimation {
+                            sheetState = .compact
+                            showPicker = false
+                        }
                     }
                 }
         )
