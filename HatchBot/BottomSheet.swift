@@ -16,23 +16,33 @@ struct BottomSheet: View {
     @Binding var fontSize: CGFloat
     @Binding var showPicker: Bool
     @Binding var selectedPhotoItems: [PhotosPickerItem]
-
     @GestureState private var dragOffset: CGFloat = 0
     @FocusState private var isTextFieldFocused: Bool
+    @State private var wasPickerOpenInExpanded: Bool = false
 
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 0) {
+            // Header with toggle button
             ZStack {
                 Capsule()
                     .frame(width: 40, height: 6)
                     .foregroundColor(.gray.opacity(0.5))
                     .padding(.top, 12)
-
                 HStack {
                     Spacer()
                     Button(action: {
                         withAnimation {
-                            sheetState = sheetState == .expanded ? .compact : .expanded
+                            if sheetState == .expanded && showPicker {
+                                // When in expanded with picker, go to compact and keep picker
+                                sheetState = .compact
+                                wasPickerOpenInExpanded = false
+                            } else {
+                                // Toggle between compact and expanded
+                                sheetState = sheetState == .expanded ? .compact : .expanded
+                                if sheetState == .compact && !wasPickerOpenInExpanded {
+                                    showPicker = false
+                                }
+                            }
                         }
                     }) {
                         Image(systemName: "arrow.up.arrow.down.circle")
@@ -44,46 +54,73 @@ struct BottomSheet: View {
                 }
             }
 
-            DynamicTextEditor(text: $message, fontSize: $fontSize)
-                .frame(minHeight: 80, maxHeight: sheetState == .expanded ? 300 : 120)
-                .padding(.horizontal)
-                .padding(.bottom, 8)
-                .focused($isTextFieldFocused)
-                .onChange(of: isTextFieldFocused) { focused in
-                    if focused {
-                        showPicker = false
+            // Content based on state
+            if showPicker && sheetState == .expanded {
+                // Photo grid in expanded state, anchored to top of content with extra padding
+                VStack(spacing: 0) {
+                    if !selectedImages.isEmpty {
+                        HorizontalImageScrollView(selectedImages: $selectedImages)
+                            .transition(.opacity)
                     }
+                    ImagePickerGrid(selectedImages: $selectedImages, selectedPhotoItems: $selectedPhotoItems)
+                        .frame(maxHeight: 650)
+                        .transition(.move(edge: .bottom))
+                }
+                .padding(.top, 44) // Increased padding to avoid overlap with nav bar
+            } else {
+                // Show text field in compact or when picker is not open in expanded
+                DynamicTextEditor(text: $message, fontSize: $fontSize)
+                    .frame(minHeight: 80, maxHeight: sheetState == .expanded ? 300 : 120)
+                    .padding(.horizontal)
+                    .padding(.bottom, 8)
+                    .focused($isTextFieldFocused)
+                    .onChange(of: isTextFieldFocused) { focused in
+                        if focused {
+                            showPicker = false
+                            wasPickerOpenInExpanded = false
+                        }
+                    }
+                    .transition(.opacity)
+
+                if !selectedImages.isEmpty {
+                    HorizontalImageScrollView(selectedImages: $selectedImages)
+                        .transition(.opacity)
                 }
 
-            if !selectedImages.isEmpty {
-                HorizontalImageScrollView(selectedImages: $selectedImages)
-                    .transition(.opacity)
+                if showPicker && sheetState == .compact {
+                    ImagePickerGrid(selectedImages: $selectedImages, selectedPhotoItems: $selectedPhotoItems)
+                        .frame(height: 300)
+                        .transition(.move(edge: .bottom))
+                }
             }
 
-            if showPicker {
-                ImagePickerGrid(selectedImages: $selectedImages, selectedPhotoItems: $selectedPhotoItems)
-                    .frame(height: 300)
-                    .transition(.move(edge: .bottom))
-            }
-
-            HStack {
-                BottomControls(
-                    onSend: onSend,
-                    showPicker: Binding(
-                        get: { showPicker },
-                        set: { newValue in
-                            withAnimation {
-                                showPicker = newValue
-                                if newValue {
-                                    isTextFieldFocused = false // hide keyboard
+            // Bottom controls, hidden in expanded picker mode
+            if !(showPicker && sheetState == .expanded) {
+                HStack {
+                    BottomControls(
+                        onSend: onSend,
+                        showPicker: Binding(
+                            get: { showPicker },
+                            set: { newValue in
+                                withAnimation {
+                                    if newValue {
+                                        if sheetState == .expanded {
+                                            // If expanded, go to compact before showing picker
+                                            sheetState = .compact
+                                            wasPickerOpenInExpanded = false
+                                        }
+                                        isTextFieldFocused = false
+                                    }
+                                    showPicker = newValue
                                 }
                             }
-                        }
-                    ),
-                    safeBottom: 0
-                )
+                        ),
+                        safeBottom: 0
+                    )
+                }
+                .padding(.horizontal)
+                .transition(.opacity)
             }
-            .padding(.horizontal)
         }
         .background(
             RoundedRectangle(cornerRadius: 20)
@@ -97,19 +134,26 @@ struct BottomSheet: View {
                     state = value.translation.height
                 }
                 .onEnded { value in
-                    if value.translation.height < -100 {
-                        withAnimation {
+                    withAnimation {
+                        if value.translation.height < -100 {
                             sheetState = .expanded
-                        }
-                    } else if value.translation.height > 100 {
-                        withAnimation {
+                            if showPicker {
+                                wasPickerOpenInExpanded = true
+                            }
+                        } else if value.translation.height > 100 {
                             sheetState = .compact
-                            showPicker = false
+                            if wasPickerOpenInExpanded {
+                                showPicker = true
+                            } else {
+                                showPicker = false
+                            }
+                            wasPickerOpenInExpanded = false
                         }
                     }
                 }
         )
         .animation(.easeInOut(duration: 0.3), value: sheetState)
+        .animation(.easeInOut(duration: 0.3), value: showPicker)
     }
 }
 

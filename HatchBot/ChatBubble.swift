@@ -57,7 +57,6 @@ struct ChatBubble: View {
             }
         }
         .padding(.vertical, 5)
-        .padding(.horizontal, 10)
         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
             Button(role: .destructive) {
                 onDelete(message)

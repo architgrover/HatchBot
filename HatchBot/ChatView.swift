@@ -147,12 +147,12 @@ struct ChatView: View {
     }
 
     func mockAIResponse(text: String, images: [UIImage]) {
-        let aiIsTyping = Message(id: UUID(), images: [], text: "AI is typing...", isUser: false)
+        let aiIsTyping = Message(id: UUID(), images: [], text: "Hatch bot is typing...", isUser: false)
         messages.append(aiIsTyping)
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
             messages.removeLast()
-            let aiResponse = Message(id: UUID(), images: images, text: "AI: \(text)", isUser: false)
+            let aiResponse = Message(id: UUID(), images: images, text: text, isUser: false)
             messages.append(aiResponse)
         }
     }
