@@ -87,7 +87,7 @@ struct BottomSheet: View {
                 .padding([.top, .bottom], 8)
                 
                 // Show text field in compact or when picker is not open in expanded
-                DynamicTextEditor(text: $message, fontSize: $fontSize)
+                DynamicTextEditor(text: $message, fontSize: $fontSize, sheetState: $sheetState)
                     .frame(minHeight: 80, maxHeight: sheetState == .expanded ? 300 : 120)
                     .padding(.horizontal)
                     .padding(.bottom, 8)

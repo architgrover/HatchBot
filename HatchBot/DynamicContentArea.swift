@@ -11,6 +11,7 @@ import PhotosUI
 struct DynamicContentArea: View {
     @Binding var message: String
     @Binding var fontSize: CGFloat
+    @Binding var sheetState: SheetState
     var showPicker: Bool
     var selectedImages: [UIImage]
     @Binding var selectedPhotoItems: [PhotosPickerItem]
@@ -18,7 +19,7 @@ struct DynamicContentArea: View {
     var body: some View {
         VStack(spacing: 0) {
             // Text editor area
-            DynamicTextEditor(text: $message, fontSize: $fontSize)
+            DynamicTextEditor(text: $message, fontSize: $fontSize, sheetState: $sheetState)
                 .frame(minHeight: 80, maxHeight: showPicker ? 100 : 200)
                 .padding(.horizontal)
                 .padding(.top, 8)

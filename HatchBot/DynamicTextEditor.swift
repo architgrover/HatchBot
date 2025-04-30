@@ -10,7 +10,8 @@ import SwiftUI
 struct DynamicTextEditor: View {
     @Binding var text: String
     @Binding var fontSize: CGFloat
-    
+    @Binding var sheetState: SheetState
+
     var body: some View {
         ZStack(alignment: .topLeading) {
             TextEditor(text: $text)
@@ -19,11 +20,7 @@ struct DynamicTextEditor: View {
                 .scrollContentBackground(.hidden)
                 .background(Color.gray.opacity(0.05))
                 .cornerRadius(12)
-                .onChange(of: text) { _, _ in
-                    adjustFontSize()
-                }
 
-            // Placeholder Text
             if text.isEmpty {
                 Text("Start Typing...")
                     .foregroundColor(.gray)
@@ -31,16 +28,28 @@ struct DynamicTextEditor: View {
                     .padding(.vertical, 12)
             }
         }
-    }
-    
-    private func adjustFontSize() {
-        let characterCount = text.count
-        if characterCount > 200 {
-            fontSize = DynamicFontSettings.small
-        } else if characterCount > 100 {
-            fontSize = DynamicFontSettings.medium
-        } else {
-            fontSize = DynamicFontSettings.large
+        .onChange(of: text) { _, _ in
+            fontSize = sheetState == .expanded ? DynamicFontSettings.large : text.dynamicFontSize()
+        }
+        .onChange(of: sheetState) { newState in
+            withAnimation(.easeInOut(duration: 0.3)) {
+                fontSize = newState == .expanded ? DynamicFontSettings.large : text.dynamicFontSize()
+            }
         }
     }
 }
+
+// MARK: - Font Size Logic
+private extension String {
+    func dynamicFontSize() -> CGFloat {
+        switch count {
+        case 0...100:
+            return DynamicFontSettings.large
+        case 101...200:
+            return DynamicFontSettings.medium
+        default:
+            return DynamicFontSettings.small
+        }
+    }
+}
+
