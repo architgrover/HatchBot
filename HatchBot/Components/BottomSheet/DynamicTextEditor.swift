@@ -31,7 +31,7 @@ struct DynamicTextEditor: View {
         .onChange(of: text) { _, _ in
             fontSize = sheetState == .expanded ? DynamicFontSettings.large : text.dynamicFontSize()
         }
-        .onChange(of: sheetState) { newState in
+        .onChange(of: sheetState) { _, newState in
             withAnimation(.easeInOut(duration: 0.3)) {
                 fontSize = newState == .expanded ? DynamicFontSettings.large : text.dynamicFontSize()
             }
@@ -52,4 +52,3 @@ private extension String {
         }
     }
 }
-

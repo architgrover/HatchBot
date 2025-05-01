@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import PhotosUI
 
 struct ChatView: View {
     @State private var message = ""
@@ -16,7 +15,6 @@ struct ChatView: View {
     @State private var bottomSheetHeight: CGFloat = 0
     @State private var selectedImages: [UIImage] = []
     @State private var sheetState: SheetState = .compact
-    @State private var selectedPhotoItems: [PhotosPickerItem] = []
     @State private var fontSize: CGFloat = DynamicFontSettings.large
     
     @FocusState private var isFocused: Bool

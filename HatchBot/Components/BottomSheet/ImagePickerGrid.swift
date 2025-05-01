@@ -11,9 +11,10 @@ import PhotosUI
 // MARK: - ImagePickerGrid
 struct ImagePickerGrid: View {
     @Binding var selectedImages: [UIImage]
-    @State private var libraryImages: [UIImage] = []
+    
     @State private var isLoading = true
     @State private var permissionDenied = false
+    @State private var libraryImages: [UIImage] = []
     
     private let tileSize: CGFloat = 120
     
@@ -23,7 +24,6 @@ struct ImagePickerGrid: View {
                 .font(.headline)
                 .padding(.top, 8)
                 .padding(.bottom, 4)
-            
             if isLoading {
                 ProgressView("Loading photos...")
                     .padding()
@@ -51,14 +51,12 @@ struct ImagePickerGrid: View {
                                     .overlay(
                                         selectedImages.contains(where: { $0.cgImage == libraryImages[index].cgImage }) ?
                                         Color.blue.opacity(0.3).clipShape(RoundedRectangle(cornerRadius: 8)) : nil
-                                    ) // Highlight selected images
+                                    )
                                     .border(selectedImages.contains(where: { $0.cgImage == libraryImages[index].cgImage }) ? Color.blue : Color.clear, width: 4)
                                     .onTapGesture {
                                         if let selectedIndex = selectedImages.firstIndex(where: { $0.cgImage == libraryImages[index].cgImage }) {
-                                            // Deselect image
                                             selectedImages.remove(at: selectedIndex)
                                         } else {
-                                            // Select image
                                             selectedImages.append(libraryImages[index])
                                         }
                                     }
@@ -106,7 +104,6 @@ struct ImagePickerGrid: View {
         let fetchOptions = PHFetchOptions()
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
         fetchOptions.fetchLimit = 15
-        
         let assets = PHAsset.fetchAssets(with: .image, options: fetchOptions)
         let manager = PHImageManager.default()
         let requestOptions = PHImageRequestOptions()
@@ -114,7 +111,6 @@ struct ImagePickerGrid: View {
         requestOptions.deliveryMode = .highQualityFormat
         
         var loadedImages: [UIImage] = []
-        
         assets.enumerateObjects { asset, _, _ in
             manager.requestImage(for: asset, targetSize: CGSize(width: tileSize * 2, height: tileSize * 2), contentMode: .aspectFill, options: requestOptions) { image, info in
                 if let image = image, let degraded = info?[PHImageResultIsDegradedKey] as? Bool, !degraded {
@@ -134,4 +130,3 @@ struct ImagePickerGrid: View {
         }
     }
 }
-

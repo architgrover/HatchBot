@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import PhotosUI
 
 struct BottomSheet: View {
     @Binding var message: String
@@ -179,8 +178,7 @@ private extension BottomSheet {
     func toggleSheetState() {
         withAnimation {
             isTextFieldFocused = false
-            // Toggle sheet state only, do not automatically collapse when image picker is shown
-            sheetState = sheetState == .expanded ? .compact : .expanded
+            sheetState.toggle()
             if sheetState == .compact && !wasPickerOpenInExpanded {
                 showImagePicker = false
             }
