@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		3273589F2DC320EF00E09A67 /* PhotosPickerItemExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3273589E2DC320E800E09A67 /* PhotosPickerItemExtension.swift */; };
 		327358A72DC33B1A00E09A67 /* ImagePickerGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327358A62DC33B1A00E09A67 /* ImagePickerGrid.swift */; };
+		327358AC2DC3500500E09A67 /* ChatMessageList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327358AB2DC3500500E09A67 /* ChatMessageList.swift */; };
 		327942D72DC1D2A800BA2F87 /* BottomControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327942CA2DC1D2A800BA2F87 /* BottomControls.swift */; };
 		327942D82DC1D2A800BA2F87 /* BottomSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327942CB2DC1D2A800BA2F87 /* BottomSheet.swift */; };
 		327942D92DC1D2A800BA2F87 /* ChatBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327942CC2DC1D2A800BA2F87 /* ChatBubble.swift */; };
@@ -25,6 +26,7 @@
 /* Begin PBXFileReference section */
 		3273589E2DC320E800E09A67 /* PhotosPickerItemExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosPickerItemExtension.swift; sourceTree = "<group>"; };
 		327358A62DC33B1A00E09A67 /* ImagePickerGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerGrid.swift; sourceTree = "<group>"; };
+		327358AB2DC3500500E09A67 /* ChatMessageList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageList.swift; sourceTree = "<group>"; };
 		327942C92DC1D2A800BA2F87 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		327942CA2DC1D2A800BA2F87 /* BottomControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomControls.swift; sourceTree = "<group>"; };
 		327942CB2DC1D2A800BA2F87 /* BottomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSheet.swift; sourceTree = "<group>"; };
@@ -98,6 +100,7 @@
 			isa = PBXGroup;
 			children = (
 				327942CC2DC1D2A800BA2F87 /* ChatBubble.swift */,
+				327358AB2DC3500500E09A67 /* ChatMessageList.swift */,
 				327942CD2DC1D2A800BA2F87 /* ChatView.swift */,
 			);
 			path = ChatView;
@@ -215,6 +218,7 @@
 				327942DB2DC1D2A800BA2F87 /* DynamicContentArea.swift in Sources */,
 				327942DC2DC1D2A800BA2F87 /* DynamicTextEditor.swift in Sources */,
 				327942DD2DC1D2A800BA2F87 /* HatchBotApp.swift in Sources */,
+				327358AC2DC3500500E09A67 /* ChatMessageList.swift in Sources */,
 				327942DE2DC1D2A800BA2F87 /* HorizontalImageScroll.swift in Sources */,
 				327358A72DC33B1A00E09A67 /* ImagePickerGrid.swift in Sources */,
 				3273589F2DC320EF00E09A67 /* PhotosPickerItemExtension.swift in Sources */,
