@@ -10,11 +10,11 @@ import SwiftUI
 struct BottomControls: View {
     var onSend: () -> Void
     
-    @Binding var showPicker: Bool
+    @Binding var showImagePicker: Bool
 
     var body: some View {
         HStack {
-            PhotoPickerButton(showPicker: $showPicker)
+            ImagePickerButton(showPicker: $showImagePicker)
             Spacer()
             SendMessageButton(action: onSend)
         }
@@ -23,7 +23,7 @@ struct BottomControls: View {
     }
 }
 
-struct PhotoPickerButton: View {
+struct ImagePickerButton: View {
     @Binding var showPicker: Bool
 
     var body: some View {

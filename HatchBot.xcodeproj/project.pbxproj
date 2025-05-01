@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3273589F2DC320EF00E09A67 /* PhotosPickerItemExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3273589E2DC320E800E09A67 /* PhotosPickerItemExtension.swift */; };
 		327942D72DC1D2A800BA2F87 /* BottomControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327942CA2DC1D2A800BA2F87 /* BottomControls.swift */; };
 		327942D82DC1D2A800BA2F87 /* BottomSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327942CB2DC1D2A800BA2F87 /* BottomSheet.swift */; };
 		327942D92DC1D2A800BA2F87 /* ChatBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327942CC2DC1D2A800BA2F87 /* ChatBubble.swift */; };
@@ -22,6 +23,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3273589E2DC320E800E09A67 /* PhotosPickerItemExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosPickerItemExtension.swift; sourceTree = "<group>"; };
 		327942C92DC1D2A800BA2F87 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		327942CA2DC1D2A800BA2F87 /* BottomControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomControls.swift; sourceTree = "<group>"; };
 		327942CB2DC1D2A800BA2F87 /* BottomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSheet.swift; sourceTree = "<group>"; };
@@ -49,12 +51,46 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		327942D62DC1D2A800BA2F87 /* HatchBot */ = {
+		327358A02DC321C600E09A67 /* BottomSheet */ = {
+			isa = PBXGroup;
+			children = (
+				327942CA2DC1D2A800BA2F87 /* BottomControls.swift */,
+				327942CB2DC1D2A800BA2F87 /* BottomSheet.swift */,
+			);
+			path = BottomSheet;
+			sourceTree = "<group>";
+		};
+		327358A12DC321D500E09A67 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				3273589E2DC320E800E09A67 /* PhotosPickerItemExtension.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		327358A32DC323A100E09A67 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				327358A02DC321C600E09A67 /* BottomSheet */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		327358A42DC323B200E09A67 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
 				327942C92DC1D2A800BA2F87 /* Assets.xcassets */,
-				327942CA2DC1D2A800BA2F87 /* BottomControls.swift */,
-				327942CB2DC1D2A800BA2F87 /* BottomSheet.swift */,
+				327942D32DC1D2A800BA2F87 /* Info.plist */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		327942D62DC1D2A800BA2F87 /* HatchBot */ = {
+			isa = PBXGroup;
+			children = (
+				327358A42DC323B200E09A67 /* Resources */,
+				327358A12DC321D500E09A67 /* Extensions */,
+				327358A32DC323A100E09A67 /* Components */,
 				327942CC2DC1D2A800BA2F87 /* ChatBubble.swift */,
 				327942CD2DC1D2A800BA2F87 /* ChatView.swift */,
 				327942CE2DC1D2A800BA2F87 /* DynamicContentArea.swift */,
@@ -62,7 +98,6 @@
 				327942D02DC1D2A800BA2F87 /* HatchBotApp.swift */,
 				327942D12DC1D2A800BA2F87 /* HorizontalImageScroll.swift */,
 				327942D22DC1D2A800BA2F87 /* ImagePickerGrid.swift */,
-				327942D32DC1D2A800BA2F87 /* Info.plist */,
 				327942D42DC1D2A800BA2F87 /* Message.swift */,
 				327942D52DC1D2A800BA2F87 /* SheetState.swift */,
 			);
@@ -166,6 +201,7 @@
 				327942DD2DC1D2A800BA2F87 /* HatchBotApp.swift in Sources */,
 				327942DE2DC1D2A800BA2F87 /* HorizontalImageScroll.swift in Sources */,
 				327942DF2DC1D2A800BA2F87 /* ImagePickerGrid.swift in Sources */,
+				3273589F2DC320EF00E09A67 /* PhotosPickerItemExtension.swift in Sources */,
 				327942E02DC1D2A800BA2F87 /* Message.swift in Sources */,
 				327942E12DC1D2A800BA2F87 /* SheetState.swift in Sources */,
 			);

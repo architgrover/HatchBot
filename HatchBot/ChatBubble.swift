@@ -16,7 +16,6 @@ struct ChatBubble: View {
             if message.isUser {
                 Spacer()
             }
-
             VStack(alignment: message.isUser ? .trailing : .leading) {
                 Text(message.text)
                     .padding(10)

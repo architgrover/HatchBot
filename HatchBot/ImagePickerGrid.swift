@@ -31,9 +31,7 @@ struct ImagePickerGrid: View {
                             .frame(width: tileSize, height: tileSize)
                             .clipShape(RoundedRectangle(cornerRadius: 8))
                             .onTapGesture {
-                                print("Tapped on image at index \(index)")
                                 selectedImages.append(libraryImages[index])
-                                print("Selected images count: \(selectedImages.count)")
                             }
                     }
                 }
@@ -42,7 +40,7 @@ struct ImagePickerGrid: View {
         }
         .background(Color(.systemBackground))
         .cornerRadius(15)
-        .frame(maxHeight: 300) // Mimic keyboard height
+        .frame(maxHeight: 300)
         .onAppear {
             fetchLibraryImages()
         }

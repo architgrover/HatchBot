@@ -77,15 +77,14 @@ struct ChatView: View {
                         }
                     }
             }
-
             BottomSheet(
                 message: $message,
-                selectedImages: $selectedImages,
-                onSend: sendMessage,
-                sheetState: $sheetState,
                 fontSize: $fontSize,
-                showPicker: $showPicker,
-                selectedPhotoItems: $selectedPhotoItems
+                showImagePicker: $showPicker,
+                sheetState: $sheetState,
+                selectedImages: $selectedImages,
+                selectedPhotoItems: $selectedPhotoItems,
+                onSend: sendMessage
             )
             .background(
                 GeometryReader { geo in
@@ -104,7 +103,7 @@ struct ChatView: View {
 
         }
         .ignoresSafeArea()
-        .navigationTitle("Chat with AI")
+        .navigationTitle("Chat with Hatch!")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(Color.white, for: .navigationBar)
         .toolbar(.visible, for: .navigationBar)
