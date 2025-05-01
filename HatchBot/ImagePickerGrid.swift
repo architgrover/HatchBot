@@ -1,71 +1,125 @@
 //
-//  ImagePickerGrid.swift
+//  ImagePickerGrid 2.swift
 //  HatchBot
 //
-//  Created by Archit Grover on 2025-04-28.
+//  Created by Archit Grover on 2025-04-30.
 //
 
 import SwiftUI
 import PhotosUI
 
+// MARK: - ImagePickerGrid
 struct ImagePickerGrid: View {
     @Binding var selectedImages: [UIImage]
-    @Binding var selectedPhotoItems: [PhotosPickerItem]
     @State private var libraryImages: [UIImage] = []
+    @State private var isLoading = true
+    @State private var permissionDenied = false
     
-    let tileSize: CGFloat = UIScreen.main.bounds.width / 3 - 5
-
+    private let tileSize: CGFloat = 120
+    
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             Text("Select Photos")
                 .font(.headline)
                 .padding(.top, 8)
-
-            // Show fetched library images directly
-            ScrollView {
-                LazyVGrid(columns: Array(repeating: GridItem(), count: 3), spacing: 5) {
-                    ForEach(libraryImages.indices, id: \.self) { index in
-                        Image(uiImage: libraryImages[index])
-                            .resizable()
-                            .aspectRatio(1, contentMode: .fill)
-                            .frame(width: tileSize, height: tileSize)
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
-                            .onTapGesture {
-                                selectedImages.append(libraryImages[index])
-                            }
+                .padding(.bottom, 4)
+            
+            if isLoading {
+                ProgressView("Loading photos...")
+                    .padding()
+            } else if permissionDenied {
+                Text("Photo library access denied. Please enable in Settings.")
+                    .foregroundColor(.red)
+                    .padding()
+            } else if libraryImages.isEmpty {
+                Text("No photos available")
+                    .foregroundColor(.gray)
+                    .padding()
+            } else {
+                ScrollView {
+                    LazyVGrid(columns: [
+                        GridItem(.adaptive(minimum: tileSize, maximum: tileSize), spacing: 8)
+                    ], spacing: 8) {
+                        ForEach(libraryImages.indices, id: \.self) { index in
+                            Image(uiImage: libraryImages[index])
+                                .resizable()
+                                .aspectRatio(1, contentMode: .fill)
+                                .frame(width: tileSize, height: tileSize)
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
+                                .contentShape(RoundedRectangle(cornerRadius: 8))
+                                .onTapGesture {
+                                    if !selectedImages.contains(where: { $0.cgImage == libraryImages[index].cgImage }) {
+                                        selectedImages.append(libraryImages[index])
+                                    }
+                                }
+                        }
                     }
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 8)
                 }
-                .padding(10)
             }
         }
         .background(Color(.systemBackground))
         .cornerRadius(15)
-        .frame(maxHeight: 300)
         .onAppear {
-            fetchLibraryImages()
+            checkPhotoLibraryPermission()
         }
     }
-
+    
+    func checkPhotoLibraryPermission() {
+        let status = PHPhotoLibrary.authorizationStatus()
+        switch status {
+        case .authorized, .limited:
+            fetchLibraryImages()
+        case .denied, .restricted:
+            permissionDenied = true
+            isLoading = false
+        case .notDetermined:
+            PHPhotoLibrary.requestAuthorization { newStatus in
+                DispatchQueue.main.async {
+                    if newStatus == .authorized || newStatus == .limited {
+                        self.fetchLibraryImages()
+                    } else {
+                        self.permissionDenied = true
+                        self.isLoading = false
+                    }
+                }
+            }
+        @unknown default:
+            permissionDenied = true
+            isLoading = false
+        }
+    }
+    
     func fetchLibraryImages() {
         let fetchOptions = PHFetchOptions()
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
         fetchOptions.fetchLimit = 15
-
+        
         let assets = PHAsset.fetchAssets(with: .image, options: fetchOptions)
         let manager = PHImageManager.default()
-
+        let requestOptions = PHImageRequestOptions()
+        requestOptions.isSynchronous = false
+        requestOptions.deliveryMode = .highQualityFormat
+        
+        var loadedImages: [UIImage] = []
+        
         assets.enumerateObjects { asset, _, _ in
-            let requestOptions = PHImageRequestOptions()
-            requestOptions.isSynchronous = true
-
-            manager.requestImage(for: asset, targetSize: CGSize(width: 100, height: 100), contentMode: .aspectFill, options: requestOptions) { image, _ in
-                if let image = image {
+            manager.requestImage(for: asset, targetSize: CGSize(width: tileSize * 2, height: tileSize * 2), contentMode: .aspectFill, options: requestOptions) { image, info in
+                if let image = image, let degraded = info?[PHImageResultIsDegradedKey] as? Bool, !degraded {
                     DispatchQueue.main.async {
-                        libraryImages.append(image)
+                        loadedImages.append(image)
+                        self.libraryImages = loadedImages
+                        self.isLoading = false
                     }
                 }
             }
         }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+            if self.libraryImages.isEmpty && !self.permissionDenied {
+                self.isLoading = false
+            }
+        }
     }
 }
-

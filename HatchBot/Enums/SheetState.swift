@@ -5,7 +5,7 @@
 //  Created by Archit Grover on 2025-04-28.
 //
 
-import Foundation
+import UIKit
 
 enum SheetState {
     case compact
@@ -13,6 +13,15 @@ enum SheetState {
     
     mutating func toggle() {
         self = self == .compact ? .expanded : .compact
+    }
+    
+    var height: CGFloat {
+        switch self {
+        case .compact:
+            return UIScreen.main.bounds.height / 6
+        case .expanded:
+            return UIScreen.main.bounds.height / 3
+        }
     }
 }
 

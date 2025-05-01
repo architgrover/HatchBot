@@ -83,7 +83,6 @@ struct ChatView: View {
                 showImagePicker: $showPicker,
                 sheetState: $sheetState,
                 selectedImages: $selectedImages,
-                selectedPhotoItems: $selectedPhotoItems,
                 onSend: sendMessage
             )
             .background(

@@ -14,11 +14,10 @@ struct BottomSheet: View {
     @Binding var showImagePicker: Bool
     @Binding var sheetState: SheetState
     @Binding var selectedImages: [UIImage]
-    @State private var wasPickerOpenInExpanded = false
-    @Binding var selectedPhotoItems: [PhotosPickerItem]
     
     @FocusState private var isTextFieldFocused: Bool
     @GestureState private var dragOffset: CGFloat = 0
+    @State private var wasPickerOpenInExpanded = false
     
     var onSend: () -> Void
     
@@ -45,9 +44,6 @@ struct BottomSheet: View {
         .gesture(dragGesture)
         .transaction { transaction in
             transaction.animation = .easeInOut(duration: 0.3)
-        }
-        .task(id: selectedPhotoItems) {
-            await loadImages()
         }
     }
 }
@@ -82,7 +78,7 @@ private extension BottomSheet {
                 fontSize: $fontSize,
                 sheetState: $sheetState
             )
-            .frame(minHeight: 80, maxHeight: sheetState == .expanded ? 300 : 120)
+            .frame(maxHeight: sheetState.height)
             .padding(.horizontal)
             .padding(.bottom, 8)
             .focused($isTextFieldFocused)
@@ -96,12 +92,9 @@ private extension BottomSheet {
                 HorizontalImageScrollView(selectedImages: $selectedImages)
             }
             if showImagePicker && sheetState == .compact {
-                ImagePickerGrid(
-                    selectedImages: $selectedImages,
-                    selectedPhotoItems: $selectedPhotoItems
-                )
-                .frame(height: 300)
-                .transition(.move(edge: .bottom))
+                ImagePickerGrid(selectedImages: $selectedImages)
+                    .frame(height: 300)
+                    .transition(.move(edge: .bottom))
             }
         }
     }
@@ -131,10 +124,7 @@ private extension BottomSheet {
                 HorizontalImageScrollView(selectedImages: $selectedImages)
                     .transition(.opacity)
             }
-            ImagePickerGrid(
-                selectedImages: $selectedImages,
-                selectedPhotoItems: $selectedPhotoItems
-            )
+            ImagePickerGrid(selectedImages: $selectedImages)
             .frame(maxHeight: 650)
             .transition(.move(edge: .bottom))
         }
@@ -189,32 +179,12 @@ private extension BottomSheet {
     func toggleSheetState() {
         withAnimation {
             isTextFieldFocused = false
-            if sheetState == .expanded && showImagePicker {
-                sheetState = .compact
-                wasPickerOpenInExpanded = false
-            } else {
-                sheetState = sheetState == .expanded ? .compact : .expanded
-                if sheetState == .compact && !wasPickerOpenInExpanded {
-                    showImagePicker = false
-                }
+            // Toggle sheet state only, do not automatically collapse when image picker is shown
+            sheetState = sheetState == .expanded ? .compact : .expanded
+            if sheetState == .compact && !wasPickerOpenInExpanded {
+                showImagePicker = false
             }
         }
-    }
-    
-    func loadImages() async {
-        let images = await withTaskGroup(of: UIImage?.self) { group in
-            for item in selectedPhotoItems {
-                group.addTask {
-                    await item.loadUIImage()
-                }
-            }
-            return await group.reduce(into: [UIImage]()) { result, image in
-                if let img = image {
-                    result.append(img)
-                }
-            }
-        }
-        selectedImages.append(contentsOf: images)
-        selectedPhotoItems = []
     }
 }
+

@@ -13,8 +13,8 @@ struct DynamicContentArea: View {
     @Binding var fontSize: CGFloat
     @Binding var sheetState: SheetState
     var showPicker: Bool
-    var selectedImages: [UIImage]
-    @Binding var selectedPhotoItems: [PhotosPickerItem]
+    @Binding var selectedImages: [UIImage]
+//    @Binding var selectedPhotoItems: [PhotosPickerItem]
 
     var body: some View {
         VStack(spacing: 0) {
@@ -26,7 +26,7 @@ struct DynamicContentArea: View {
 
             // Image picker grid
             if showPicker {
-                ImagePickerGrid(selectedImages: .constant(selectedImages), selectedPhotoItems: $selectedPhotoItems)
+                ImagePickerGrid(selectedImages: .constant(selectedImages))
                     .frame(height: 300)
                     .transition(.move(edge: .bottom))
             }
