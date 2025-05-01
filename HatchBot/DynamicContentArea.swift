@@ -14,7 +14,6 @@ struct DynamicContentArea: View {
     @Binding var sheetState: SheetState
     var showPicker: Bool
     @Binding var selectedImages: [UIImage]
-//    @Binding var selectedPhotoItems: [PhotosPickerItem]
 
     var body: some View {
         VStack(spacing: 0) {

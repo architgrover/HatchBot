@@ -10,27 +10,29 @@ import SwiftUI
 struct ChatBubble: View {
     var message: Message
     var onDelete: (Message) -> Void
+        
+    private var bubbleAlignment: Alignment {
+        message.isUser ? .trailing : .leading
+    }
+
+    private var bubbleColor: Color {
+        message.isUser ? .accentColor : .secondary.opacity(0.5)
+    }
+    
+    private let maxBubbleWidth = UIScreen.main.bounds.width * 0.70
 
     var body: some View {
         HStack {
-            if message.isUser {
-                Spacer()
-            }
-            VStack(alignment: message.isUser ? .trailing : .leading) {
+            if message.isUser { Spacer() }
+            VStack(alignment: bubbleAlignment.horizontal) {
                 Text(message.text)
                     .padding(10)
-                    .background(message.isUser ? Color.blue : Color.gray)
+                    .background(bubbleColor)
                     .cornerRadius(15)
                     .foregroundColor(.white)
-                    .frame(maxWidth: 250, alignment: message.isUser ? .trailing : .leading)
-
+                    .frame(maxWidth: maxBubbleWidth, alignment: bubbleAlignment)
                 if !message.images.isEmpty {
-                    if message.isUser {
-                        Spacer()
-                    }
-
                     let computedWidth = CGFloat(message.images.count * 80 + (message.images.count - 1) * 8)
-
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 8) {
                             ForEach(message.images, id: \.self) { image in
@@ -42,15 +44,11 @@ struct ChatBubble: View {
                             }
                         }
                     }
-                    .frame(width: computedWidth)
-
-                    if !message.isUser {
-                        Spacer()
-                    }
+                    .frame(width: min(computedWidth, UIScreen.main.bounds.width))
+                    .padding(.top, 8)
                 }
-
             }
-            .frame(maxWidth: .infinity, alignment: message.isUser ? .trailing : .leading)
+            .frame(maxWidth: maxBubbleWidth, alignment: bubbleAlignment)
             if !message.isUser {
                 Spacer()
             }

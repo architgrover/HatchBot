@@ -72,6 +72,7 @@
 			isa = PBXGroup;
 			children = (
 				327358A02DC321C600E09A67 /* BottomSheet */,
+				327358AA2DC34F0900E09A67 /* ChatView */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -93,21 +94,28 @@
 			path = Enums;
 			sourceTree = "<group>";
 		};
+		327358AA2DC34F0900E09A67 /* ChatView */ = {
+			isa = PBXGroup;
+			children = (
+				327942CC2DC1D2A800BA2F87 /* ChatBubble.swift */,
+				327942CD2DC1D2A800BA2F87 /* ChatView.swift */,
+			);
+			path = ChatView;
+			sourceTree = "<group>";
+		};
 		327942D62DC1D2A800BA2F87 /* HatchBot */ = {
 			isa = PBXGroup;
 			children = (
-				327358A52DC3293700E09A67 /* Enums */,
-				327358A42DC323B200E09A67 /* Resources */,
-				327358A12DC321D500E09A67 /* Extensions */,
 				327358A32DC323A100E09A67 /* Components */,
-				327942CC2DC1D2A800BA2F87 /* ChatBubble.swift */,
-				327942CD2DC1D2A800BA2F87 /* ChatView.swift */,
 				327942CE2DC1D2A800BA2F87 /* DynamicContentArea.swift */,
 				327942CF2DC1D2A800BA2F87 /* DynamicTextEditor.swift */,
+				327358A52DC3293700E09A67 /* Enums */,
+				327358A12DC321D500E09A67 /* Extensions */,
 				327942D02DC1D2A800BA2F87 /* HatchBotApp.swift */,
 				327942D12DC1D2A800BA2F87 /* HorizontalImageScroll.swift */,
 				327358A62DC33B1A00E09A67 /* ImagePickerGrid.swift */,
 				327942D42DC1D2A800BA2F87 /* Message.swift */,
+				327358A42DC323B200E09A67 /* Resources */,
 			);
 			path = HatchBot;
 			sourceTree = "<group>";
