@@ -55,6 +55,12 @@
 - **Dynamic Font Resizing**: Handles the resizing logic based on the amount of text entered.
 - **Keyboard Observers**: Dynamically adjusts the UI when the keyboard appears or disappears.
 
+## 🎥 Demo
+
+Click below to watch a short demo of Hatch Bot in action:
+
+[🎬 Watch HatchBot Demo](HatchBot_Demo.mp4)
+
 ## Requirements
 
 - iOS 15+
