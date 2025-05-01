@@ -41,17 +41,28 @@ struct ImagePickerGrid: View {
                         GridItem(.adaptive(minimum: tileSize, maximum: tileSize), spacing: 8)
                     ], spacing: 8) {
                         ForEach(libraryImages.indices, id: \.self) { index in
-                            Image(uiImage: libraryImages[index])
-                                .resizable()
-                                .aspectRatio(1, contentMode: .fill)
-                                .frame(width: tileSize, height: tileSize)
-                                .clipShape(RoundedRectangle(cornerRadius: 8))
-                                .contentShape(RoundedRectangle(cornerRadius: 8))
-                                .onTapGesture {
-                                    if !selectedImages.contains(where: { $0.cgImage == libraryImages[index].cgImage }) {
-                                        selectedImages.append(libraryImages[index])
+                            ZStack {
+                                Image(uiImage: libraryImages[index])
+                                    .resizable()
+                                    .aspectRatio(1, contentMode: .fill)
+                                    .frame(width: tileSize, height: tileSize)
+                                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                                    .contentShape(RoundedRectangle(cornerRadius: 8))
+                                    .overlay(
+                                        selectedImages.contains(where: { $0.cgImage == libraryImages[index].cgImage }) ?
+                                        Color.blue.opacity(0.3).clipShape(RoundedRectangle(cornerRadius: 8)) : nil
+                                    ) // Highlight selected images
+                                    .border(selectedImages.contains(where: { $0.cgImage == libraryImages[index].cgImage }) ? Color.blue : Color.clear, width: 4)
+                                    .onTapGesture {
+                                        if let selectedIndex = selectedImages.firstIndex(where: { $0.cgImage == libraryImages[index].cgImage }) {
+                                            // Deselect image
+                                            selectedImages.remove(at: selectedIndex)
+                                        } else {
+                                            // Select image
+                                            selectedImages.append(libraryImages[index])
+                                        }
                                     }
-                                }
+                            }
                         }
                     }
                     .padding(.horizontal, 10)
@@ -123,3 +134,4 @@ struct ImagePickerGrid: View {
         }
     }
 }
+
